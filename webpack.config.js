@@ -8,12 +8,14 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const inDevMode = process.env.NODE_ENV === 'development';
 
 module.exports = {
+	mode: 'production',
 	devServer: {
 		contentBase: './dist'
 	},
 	devtool: 'source-map',
 	entry: {
-		pageOne: './src/index/index.js'
+		pageOne: './src/index/index.js',
+		contact: './src/contact/contact.js'
 	},
 	output: {
 		filename: '[name].bundle.js',
@@ -28,9 +30,7 @@ module.exports = {
 					// {
 					// 	loader: MiniCssExtractPlugin.loader
 					// },
-					inDevMode
-						? { loader: 'style-loader', options: { sourceMap: true } }
-						: MiniCssExtractPlugin.loader,
+					inDevMode ? 'style-loader' : MiniCssExtractPlugin.loader,
 					{
 						loader: 'css-loader',
 						options: {
@@ -59,7 +59,14 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			filename: 'index.html',
 			template: 'src/index/index.html',
-			inject: true
+			inject: true,
+			chunks: ['pageOne']
+		}),
+		new HtmlWebpackPlugin({
+			filename: 'contact.html',
+			template: 'src/contact/contact.html',
+			inject: true,
+			chunks: ['contact']
 		})
 	],
 	optimization: {
@@ -67,7 +74,7 @@ module.exports = {
 			new UglifyJsPlugin({
 				cache: true,
 				parallel: true,
-				sourceMap: true // set to true if you want JS source maps
+				sourceMap: true
 			}),
 			new OptimizeCSSAssetsPlugin({})
 		]
